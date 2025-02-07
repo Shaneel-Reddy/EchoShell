@@ -31,4 +31,28 @@ public class Main {
             }
         }
     }
+
+
+    private static String findExecutable(String command) {
+        String pathEnv = System.getenv("PATH");
+        if (pathEnv == null) {
+            return null;
+        }
+        String[] paths = pathEnv.split(":");
+        for (String path : paths) {
+            File file = new File(path, command);
+            if (file.exists() && file.canExecute()) {
+                return file.getAbsolutePath();
+            }
+        }
+        return null;
+    }
+
+    private static boolean isbuiltin(String command) {
+        if (command.equals("echo") || command.equals("exit") || command.equals("type")) {
+            return true;
+        }
+        return false;
+    }
+
 }
