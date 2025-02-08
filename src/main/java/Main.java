@@ -43,6 +43,37 @@ public class Main {
         }
     }
 
+    private static void handleCdCommand(String[] args) {
+        if (args.length == 0) {
+            return;
+        }
+        File newDirectory;
+        if (args[0].equals("~")) {
+            String homedir = System.getenv("HOME");
+            if (homedir == null) {
+                return;
+            }
+            newDirectory = new File(homedir);
+        } else {
+            newDirectory = new File(args[0]);
+            if (!newDirectory.isAbsolute()) {
+                newDirectory = new File(pwd, args[0]);
+            }
+        }
+
+        try {
+            newDirectory = newDirectory.getCanonicalFile();
+
+            if (newDirectory.exists() && newDirectory.isDirectory()) {
+                pwd = newDirectory;
+            } else {
+                System.out.println("cd: " + args[0] + ": No such file or directory");
+            }
+        } catch (Exception e) {
+            System.out.println("cd: Error resolving path: " + e.getMessage());
+        }
+
+    }
 
     private static void executeCommand(String command, String[] args) {
         String executablePath = findExecutable(command);
