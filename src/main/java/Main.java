@@ -33,6 +33,50 @@ public class Main {
     }
 
 
+    private static void executeCommand(String command, String[] args) {
+        String executablePath = findExecutable(command);
+        if (executablePath == null) {
+            System.out.println(command + ": command not found");
+            return;
+        }
+        try {
+            List<String> commandList = new ArrayList<>();
+            commandList.add(command);
+            commandList.addAll(Arrays.asList(args));
+
+            ProcessBuilder pb = new ProcessBuilder(commandList);
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            process.waitFor();
+        } catch (Exception e) {
+            System.out.println("Error executing command: " + e.getMessage());
+        }
+    }
+
+    private static void handleTypeCommand(String[] args) {
+        if (args.length == 0) {
+            System.out.println("type: missing operand");
+            return;
+        }
+        String command = args[0];
+        if (isbuiltin(command)) {
+            System.out.println(command + " is a shell builtin");
+        } else {
+            String executablePath = findExecutable(command);
+            if (executablePath != null) {
+                System.out.println(command + " is " + executablePath);
+            } else {
+                System.out.println(command + ": not found");
+            }
+        }
+    }
+
+
     private static String findExecutable(String command) {
         String pathEnv = System.getenv("PATH");
         if (pathEnv == null) {
