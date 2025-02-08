@@ -2,8 +2,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // Uncomment this block to pass the first stage
-
         Scanner scanner = new Scanner(System.in);
         while(true)
         {
@@ -26,8 +24,21 @@ public class Main {
                 }
             }
 
+
             else {
                 System.out.println(input + ": command not found");
+
+            if (command.equals("echo")) {
+                System.out.println(input.substring(5));
+            }
+            else if (command.equals("pwd")) {
+                System.out.println(System.getProperty("user.dir")); 
+            }
+            else if (command.equals("type")) {
+                handleTypeCommand(commandArgs);
+            }
+            else {
+                executeCommand(command, commandArgs);
             }
         }
     }
@@ -93,10 +104,6 @@ public class Main {
     }
 
     private static boolean isbuiltin(String command) {
-        if (command.equals("echo") || command.equals("exit") || command.equals("type")) {
-            return true;
-        }
-        return false;
+        return command.equals("echo") || command.equals("exit") || command.equals("type") || command.equals("pwd");
     }
-
 }
