@@ -10,6 +10,7 @@ public class Main {
             if (input.trim().equals("exit 0")) {
                 System.exit(0);
             }
+
             if(input.startsWith("echo"))
             {
                 System.out.println(input.substring(5));
@@ -35,12 +36,75 @@ public class Main {
                 System.out.println(System.getProperty("user.dir")); 
             }
             else if (command.equals("type")) {
+
+
+            List<String> tokens = tokenizeinput(input);
+            if (tokens.isEmpty()) {
+                continue;
+            }
+
+            String command = tokens.getFirst();
+            String[] commandArgs = tokens.subList(1, tokens.size()).toArray(new String[0]);
+
+            if (command.equals("echo")) {
+                System.out.println(String.join(" ", commandArgs));
+            } else if (command.equals("pwd")) {
+                System.out.println(pwd.getAbsolutePath());
+            } else if (command.equals("cd")) {
+                handleCdCommand(commandArgs);
+            } else if (command.equals("type")) {
                 handleTypeCommand(commandArgs);
             }
             else {
                 executeCommand(command, commandArgs);
             }
         }
+    }
+
+    private static List<String> tokenizeinput(String input) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder currentToken = new StringBuilder();
+        boolean inSingleQuotes = false;
+        boolean inDoubleQuotes = false;
+        boolean escapeNext = false;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+
+            if (escapeNext) {
+                currentToken.append(c);
+                escapeNext = false;
+                continue;
+            }
+
+            if (c == '\\') {
+                escapeNext = true;
+                continue;
+            }
+
+            if (c == '\'' && !inDoubleQuotes) {
+                inSingleQuotes = !inSingleQuotes;
+                continue;
+            }
+            if (c == '"' && !inSingleQuotes) {
+                inDoubleQuotes = !inDoubleQuotes;
+                continue;
+            }
+
+            if (!inSingleQuotes && !inDoubleQuotes && Character.isWhitespace(c)) {
+                if (!currentToken.isEmpty()) {
+                    tokens.add(currentToken.toString());
+                    currentToken.setLength(0);
+                }
+            } else {
+                currentToken.append(c);
+            }
+        }
+
+        if (!currentToken.isEmpty()) {
+            tokens.add(currentToken.toString());
+        }
+
+        return tokens;
     }
 
     private static void handleCdCommand(String[] args) {
