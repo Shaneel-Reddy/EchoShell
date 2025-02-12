@@ -78,6 +78,12 @@ public class Main {
 
             if (c == '\\') {
                 escapeNext = true;
+
+                if (inSingleQuotes || inDoubleQuotes) {
+                    currentToken.append(c);
+                } else {
+                    escapeNext = true;
+                }
                 continue;
             }
 
@@ -170,7 +176,7 @@ public class Main {
             return;
         }
         String command = args[0];
-        if (isbuiltin(command)) {
+        if (builtin(command)) {
             System.out.println(command + " is a shell builtin");
         } else {
             String executablePath = findExecutable(command);
@@ -198,7 +204,7 @@ public class Main {
         return null;
     }
 
-    private static boolean isbuiltin(String command) {
+    private static boolean builtin(String command) {
         return command.equals("echo") || command.equals("exit") || command.equals("type") || command.equals("pwd");
     }
 }
