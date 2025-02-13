@@ -62,6 +62,59 @@ public class Main {
     }
 
     private static List<String> tokenizeinput(String input) {
+
+    private static void handleEchoCommand(String[] args) {
+        StringBuilder output = new StringBuilder();
+        for (String arg : args) {
+            output.append(interpretEscapeSequences(arg)).append(" ");
+
+            if (arg.startsWith("'") && arg.endsWith("'")) {
+                output.append(arg, 1, arg.length() - 1).append(" ");
+            } else if (arg.startsWith("\"") && arg.endsWith("\"")) {
+                output.append(interpretEscapeSequences(arg.substring(1, arg.length() - 1))).append(" ");
+            } else {
+                output.append(arg).append(" ");
+            }
+
+        }
+        System.out.println(output.toString().trim());
+    }
+
+    private static String interpretEscapeSequences(String input) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c == '\\' && i + 1 < input.length()) {
+                char nextChar = input.charAt(i + 1);
+                switch (nextChar) {
+                    case 'n':
+                        result.append('\n');
+                        break;
+                    case 't':
+                        result.append('\t');
+                        break;
+                    case '\\':
+                        result.append('\\');
+                        break;
+                    case '"':
+                        result.append('"');
+                        break;
+                    case '\'':
+                        result.append('\'');
+                        break;
+                    default:
+                        result.append('\\').append(nextChar);
+                        break;
+                }
+                i++;
+            } else {
+                result.append(c);
+            }
+        }
+        return result.toString();
+    }
+
+    private static List<String> tokenizeInput(String input) {
         List<String> tokens = new ArrayList<>();
         StringBuilder currentToken = new StringBuilder();
         boolean inSingleQuotes = false;
