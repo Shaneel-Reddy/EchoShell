@@ -66,6 +66,7 @@ public class Main {
     private static void handleEchoCommand(String[] args) {
         StringBuilder output = new StringBuilder();
         for (String arg : args) {
+
             output.append(interpretEscapeSequences(arg)).append(" ");
 
             if (arg.startsWith("'") && arg.endsWith("'")) {
@@ -75,6 +76,8 @@ public class Main {
             } else {
                 output.append(arg).append(" ");
             }
+
+            output.append(arg).append(" ");
 
         }
         System.out.println(output.toString().trim());
@@ -137,20 +140,16 @@ public class Main {
                     currentToken.append(c);
 
                 if (inSingleQuotes) {
-                    // In single quotes, backslash has no special meaning
                     currentToken.append('\\');
                 } else if (inDoubleQuotes) {
-                    // In double quotes, backslash escapes only certain characters
                     if (i + 1 < input.length()) {
                         char nextChar = input.charAt(i + 1);
                         if (nextChar == '\\' || nextChar == '"' || nextChar == '$') {
                             escapeNext = true;
                         } else {
-                            // For other characters, preserve the backslash
                             currentToken.append('\\');
                         }
                     } else {
-                        // Backslash at the end of input
                         currentToken.append('\\');
                     }
 
