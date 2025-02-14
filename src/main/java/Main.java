@@ -120,6 +120,7 @@ public class Main {
         boolean inSingleQuotes = false;
         boolean inDoubleQuotes = false;
         boolean escapeNext = false;
+
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
 
@@ -134,6 +135,25 @@ public class Main {
 
                 if (inSingleQuotes || inDoubleQuotes) {
                     currentToken.append(c);
+
+                if (inSingleQuotes) {
+                    // In single quotes, backslash has no special meaning
+                    currentToken.append('\\');
+                } else if (inDoubleQuotes) {
+                    // In double quotes, backslash escapes only certain characters
+                    if (i + 1 < input.length()) {
+                        char nextChar = input.charAt(i + 1);
+                        if (nextChar == '\\' || nextChar == '"' || nextChar == '$') {
+                            escapeNext = true;
+                        } else {
+                            // For other characters, preserve the backslash
+                            currentToken.append('\\');
+                        }
+                    } else {
+                        // Backslash at the end of input
+                        currentToken.append('\\');
+                    }
+
                 } else {
                     escapeNext = true;
                 }
@@ -144,6 +164,7 @@ public class Main {
                 inSingleQuotes = !inSingleQuotes;
                 continue;
             }
+
             if (c == '"' && !inSingleQuotes) {
                 inDoubleQuotes = !inDoubleQuotes;
                 continue;
