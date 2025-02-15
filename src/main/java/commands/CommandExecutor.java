@@ -15,7 +15,7 @@ public class CommandExecutor {
         }
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals(">") || args[i].equals("1>") || args[i].equals("2>") || args[i].equals(">>") || args[i].equals("1>>")) {
+            if (args[i].equals(">") || args[i].equals("1>") || args[i].equals("2>") || args[i].equals(">>") || args[i].equals("1>>")|| args[i].equals("2>>")) {
                 RedirectionExecutor.execute(command, args, i);
                 return;
             }

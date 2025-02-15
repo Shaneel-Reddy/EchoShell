@@ -33,6 +33,10 @@ public class RedirectionExecutor {
                     pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File(outputFile)));
                     pb.redirectError(ProcessBuilder.Redirect.INHERIT);
                 }
+                case "2>>" -> {
+                    pb.redirectError(ProcessBuilder.Redirect.appendTo(new File(outputFile)));
+                    pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                }
                 default -> {
                     pb.redirectOutput(new File(outputFile));
                     pb.redirectError(new File(outputFile));
