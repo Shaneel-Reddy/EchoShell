@@ -17,8 +17,27 @@ public class RedirectionExecutor {
             commandList.addAll(Arrays.asList(args).subList(0, redirectionIndex));
 
             ProcessBuilder pb = new ProcessBuilder(commandList);
+<<<<<<< HEAD
             pb.redirectOutput(new File(outputFile));
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+=======
+            switch (redirectOperator) {
+                case ">", "1>" -> {
+                    pb.redirectOutput(new File(outputFile));
+                    pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                    break;
+                }
+                case "2>" -> {
+                    pb.redirectError(new File(outputFile));
+                    pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                    break;
+                }
+                default -> {
+                    pb.redirectOutput(new File(outputFile));
+                    pb.redirectError(new File(outputFile));
+                }
+            }
+>>>>>>> 0925b72 (feat: implement standard error redirection support for commands)
             Process process = pb.start();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
