@@ -11,15 +11,13 @@ public class RedirectionExecutor {
         try {
 
             String outputFile = args[redirectionIndex + 1];
+            String redirectOperator = args[redirectionIndex];
 
             List<String> commandList = new ArrayList<>();
             commandList.add(command);
             commandList.addAll(Arrays.asList(args).subList(0, redirectionIndex));
 
             ProcessBuilder pb = new ProcessBuilder(commandList);
-            pb.redirectOutput(new File(outputFile));
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-
             switch (redirectOperator) {
                 case ">", "1>" -> {
                     pb.redirectOutput(new File(outputFile));
