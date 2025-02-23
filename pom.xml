@@ -9,17 +9,26 @@
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>23</java.version>
+        <java.version>21</java.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>3.21.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
                 <configuration>
                     <finalName>codecrafters-shell</finalName> <!-- Please do not change this final artifact name-->
                     <descriptorRefs>
@@ -33,7 +42,7 @@
                             <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
-                    <outputDirectory>${dir}</outputDirectory>
+                    <outputDirectory>target</outputDirectory> <!-- Output directory for the JAR -->
                 </configuration>
 
                 <executions>
@@ -46,7 +55,17 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Compiler plugin to enforce Java version -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
 </project>
