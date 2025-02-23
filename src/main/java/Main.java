@@ -1,49 +1,22 @@
 import java.io.File;
 import java.util.List;
-import org.jline.reader.*;
-import org.jline.reader.impl.LineReaderImpl;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-import commands.CommandExecutor;
-import commands.EchoCommand;
-import commands.CdCommand;
-import commands.TypeCommand;
+import utils.ShellReader;
 import utils.Tokenizer;
-import utils.CommandCompleter;
+import commands.*;
 
 public class Main {
     private static File pwd = new File(System.getProperty("user.dir"));
 
     public static void main(String[] args) throws Exception {
-        Terminal terminal = TerminalBuilder.builder()
-                .system(true)
-                .build();
-
-        LineReader lineReader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .completer((reader, line, candidates) -> {
-                    String buffer = line.line();
-                    String[] parts = buffer.split("\\s+");
-
-                    if (parts.length == 1) {
-                        String completed = CommandCompleter.complete(buffer);
-                        if (!completed.equals(buffer)) {
-                            candidates.add(new Candidate(completed));
-                        }
-                    }
-                })
-                .build();
+        ShellReader reader = new ShellReader();
 
         while (true) {
-            String input;
-            try {
-                input = lineReader.readLine("$ ").trim();
-            } catch (UserInterruptException e) {
-                continue;
-            } catch (EndOfFileException e) {
+            String input = reader.readLine();
+            if (input == null) {
                 break;
             }
 
+            input = input.trim();
             if (input.equals("exit 0")) {
                 System.exit(0);
             }
