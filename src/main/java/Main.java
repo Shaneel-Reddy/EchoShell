@@ -1,7 +1,9 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import org.jline.reader.*;
 import org.jline.reader.impl.LineReaderImpl;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import commands.CommandExecutor;
@@ -14,46 +16,39 @@ import utils.CommandCompleter;
 public class Main {
     private static File pwd = new File(System.getProperty("user.dir"));
 
-    public static void main(String[] args) throws Exception {
-        Terminal terminal = TerminalBuilder.builder()
-                .system(true)
-                .build();
-
+    public static void main(String[] args) throws IOException {
+        // Set up JLine terminal and line reader
+        Terminal terminal = TerminalBuilder.builder().system(true).build();
         LineReader lineReader = LineReaderBuilder.builder()
                 .terminal(terminal)
-                .completer((reader, line, candidates) -> {
-                    String buffer = line.line();
-                    String[] parts = buffer.split("\\s+");
-
-                    if (parts.length == 1) {
-                        String completed = CommandCompleter.complete(buffer);
-                        if (!completed.equals(buffer)) {
-                            candidates.add(new Candidate(completed));
-                        }
-                    }
-                })
+                .completer(new StringsCompleter("echo", "exit")) // Add commands for autocompletion
                 .build();
 
         while (true) {
-            String input;
-            try {
-                input = lineReader.readLine("$ ").trim();
-            } catch (UserInterruptException e) {
-                continue;
-            } catch (EndOfFileException e) {
-                break;
+            String input = lineReader.readLine("$ ").trim();
+
+            // Handle exit command
+            if (input.startsWith("exit")) {
+                int exitCode = 0;
+                String[] exitTokens = input.split("\\s+");
+                if (exitTokens.length > 1) {
+                    try {
+                        exitCode = Integer.parseInt(exitTokens[1]);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid exit code. Using default code 0.");
+                    }
+                }
+                System.exit(exitCode);
             }
 
-            if (input.equals("exit 0")) {
-                System.exit(0);
-            }
-
+            // Tokenize input
             List<String> tokens = Tokenizer.tokenizeInput(input);
             if (tokens.isEmpty()) {
                 continue;
             }
 
-            String command = tokens.getFirst();
+            // Execute command
+            String command = tokens.getFirst().toLowerCase();
             String[] commandArgs = tokens.subList(1, tokens.size()).toArray(new String[0]);
 
             switch (command) {
