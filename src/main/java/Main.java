@@ -1,58 +1,60 @@
+import java.io.Console;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 import commands.CommandExecutor;
 import commands.EchoCommand;
 import commands.CdCommand;
 import commands.TypeCommand;
-import org.jline.reader.LineReader;
-import org.jline.reader.impl.completer.StringsCompleter;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 import utils.Tokenizer;
+
 public class Main {
     private static File pwd = new File(System.getProperty("user.dir"));
 
-    public static void main(String[] args) throws IOException {
-        // Set up JLine terminal and line reader
-        Terminal terminal = TerminalBuilder.builder().system(true).build();
-        LineReader lineReader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .completer(new StringsCompleter("echo", "exit")) // Add commands for autocompletion
-                .build();
+    public static void main(String[] args) throws Exception {
+        Console console = System.console();
+        if (console == null) {
+            System.err.println("No console available. Exiting.");
+            System.exit(1);
+        }
 
         while (true) {
-            String input = lineReader.readLine("$ ").trim();
-
-            // Handle exit command
-            if (input.startsWith("exit")) {
-                int exitCode = 0;
-                String[] exitTokens = input.split("\\s+");
-                if (exitTokens.length > 1) {
-                    try {
-                        exitCode = Integer.parseInt(exitTokens[1]);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Invalid exit code. Using default code 0.");
+            System.out.print("$ ");
+            StringBuilder inputBuilder = new StringBuilder();
+            while (true) {
+                char c = (char) console.reader().read();
+                if (c == '\t') { // Handle TAB key
+                    String partialInput = inputBuilder.toString().trim();
+                    if (partialInput.startsWith("ech")) {
+                        inputBuilder.setLength(0); // Clear the input
+                        inputBuilder.append("echo "); // Autocomplete to "echo "
+                        System.out.print("\r$ echo "); // Update the prompt
+                    } else if (partialInput.startsWith("exi")) {
+                        inputBuilder.setLength(0); // Clear the input
+                        inputBuilder.append("exit "); // Autocomplete to "exit "
+                        System.out.print("\r$ exit "); // Update the prompt
                     }
+                } else if (c == '\n' || c == '\r') { // Handle Enter key
+                    break;
+                } else {
+                    inputBuilder.append(c); // Append the character to the input
                 }
-                System.exit(exitCode);
             }
 
-            // Tokenize input
+            String input = inputBuilder.toString().trim();
+            if (input.equals("exit 0")) {
+                System.exit(0);
+            }
+
             List<String> tokens = Tokenizer.tokenizeInput(input);
             if (tokens.isEmpty()) {
                 continue;
             }
 
-            // Execute command
-            String command = tokens.getFirst().toLowerCase();
+            String command = tokens.getFirst();
             String[] commandArgs = tokens.subList(1, tokens.size()).toArray(new String[0]);
 
-
             switch (command) {
-                case "echo" -> EchoCommand.handle(command,commandArgs);
+                case "echo" -> EchoCommand.handle(command, commandArgs);
                 case "pwd" -> System.out.println(pwd.getAbsolutePath());
                 case "cd" -> pwd = CdCommand.handle(commandArgs, pwd);
                 case "type" -> TypeCommand.handle(commandArgs);
