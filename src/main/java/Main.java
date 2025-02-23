@@ -1,29 +1,53 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 import commands.CommandExecutor;
 import commands.EchoCommand;
 import commands.CdCommand;
 import commands.TypeCommand;
+import org.jline.reader.LineReader;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import utils.Tokenizer;
 public class Main {
     private static File pwd = new File(System.getProperty("user.dir"));
 
-    public static void main(String[] args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        // Set up JLine terminal and line reader
+        Terminal terminal = TerminalBuilder.builder().system(true).build();
+        LineReader lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .completer(new StringsCompleter("echo", "exit")) // Add commands for autocompletion
+                .build();
+
         while (true) {
-            System.out.print("$ ");
-            String input = scanner.nextLine().trim();
-            if (input.equals("exit 0")) {
-                System.exit(0);
+            String input = lineReader.readLine("$ ").trim();
+
+            // Handle exit command
+            if (input.startsWith("exit")) {
+                int exitCode = 0;
+                String[] exitTokens = input.split("\\s+");
+                if (exitTokens.length > 1) {
+                    try {
+                        exitCode = Integer.parseInt(exitTokens[1]);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid exit code. Using default code 0.");
+                    }
+                }
+                System.exit(exitCode);
             }
 
+            // Tokenize input
             List<String> tokens = Tokenizer.tokenizeInput(input);
             if (tokens.isEmpty()) {
                 continue;
             }
 
-            String command = tokens.getFirst();
+            // Execute command
+            String command = tokens.getFirst().toLowerCase();
             String[] commandArgs = tokens.subList(1, tokens.size()).toArray(new String[0]);
 
 

@@ -15,6 +15,15 @@
         <java.version>23</java.version>
     </properties>
 
+    <dependencies>
+        <!-- Add JLine dependency for terminal handling and autocompletion -->
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>3.22.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
