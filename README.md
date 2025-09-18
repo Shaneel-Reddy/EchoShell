@@ -1,35 +1,28 @@
-[![progress-banner](https://backend.codecrafters.io/progress/shell/d8d6c154-194e-44e6-9f88-28cade325db6)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# EchoShell
 
-This is a starting point for Java solutions to the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
+A **POSIX-compliant shell** implemented in Java, designed to emulate Unix shell functionalities with support for command parsing, process management, I/O redirection, and dynamic directory navigation. EchoShell also integrates a REPL environment and comprehensive error handling to deliver a seamless user experience.
 
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+---
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+## ✨ Features
+- POSIX compliance for core shell operations  
+- Command parsing & execution with built-in and external commands  
+- Process management with foreground/background execution  
+- Dynamic directory navigation (`cd`, `pwd`, relative/absolute paths)  
+- Input/Output redirection (`>`, `<`, `>>`) and piping (`|`)  
+- REPL environment with interactive prompt  
+- Robust error handling for invalid commands and edge cases  
 
-# Passing the first stage
+---
 
-The entry point for your `shell` implementation is in `src/main/java/Main.java`.
-Study and uncomment the relevant code, and push your changes to pass the first
-stage:
+## 🚀 Getting Started
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
+### Prerequisites
+- Java 17+  
+- Maven (for building, optional if running directly with `javac`)  
 
-Time to move on to the next stage!
-
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `mvn` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main/java/Main.java`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/EchoShell.git
+   cd EchoShell
